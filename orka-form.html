@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vaga: Social Media Jr — ORKA Co</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0F2240;
+      --card:      #10131A;
+      --input-bg:  #181C26;
+      --border:    #252933;
+      --border-focus: #C85C1F;
+      --accent:    #C85C1F;
+      --accent-dim: rgba(200,92,31,0.15);
+      --text:      #F0F0F2;
+      --muted:     #6B7080;
+      --success:   #00C896;
+      --warn:      #FFC940;
+      --radius:    12px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: linear-gradient(160deg, #0F2240 0%, #1A1A1A 52%, #2A1206 100%);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── STORY BAR ── */
+    .story-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      gap: 4px;
+      padding: 10px 16px;
+      background: linear-gradient(to bottom, rgba(10,28,56,0.95), transparent);
+    }
+
+    .story-seg {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .story-seg .fill {
+      height: 100%;
+      background: #C85C1F;
+      width: 0%;
+      transition: width 0.4s ease;
+      border-radius: 99px;
+    }
+
+    .story-seg.done .fill { width: 100%; }
+    .story-seg.active .fill { width: 60%; }
+
+    /* ── HEADER ── */
+    .header {
+      padding: 72px 20px 32px;
+      text-align: center;
+    }
+
+    .orka-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(200,92,31,0.3);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .orka-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(26px, 6vw, 40px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .header h1 span {
+      color: var(--accent);
+    }
+
+    .header p {
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto;
+      font-size: 14px;
+    }
+
+    /* ── TAGS ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ── FORM WRAPPER ── */
+    .form-wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 0 16px 80px;
+    }
+
+    /* ── STEPS ── */
+    .step { display: none; }
+    .step.active { display: block; animation: fadeUp 0.35s ease; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .step-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(20px, 4vw, 26px);
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .step-desc {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 28px;
+      line-height: 1.55;
+    }
+
+    /* ── FIELD ── */
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .field label .req {
+      color: var(--accent);
+      margin-left: 3px;
+    }
+
+    .field label .hint {
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 12px;
+      display: block;
+      margin-top: 2px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      appearance: none;
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--border-focus);
+      background: #1C2030;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7080' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    /* ── CHECKBOX GROUP ── */
+    .check-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .check-item {
+      position: relative;
+    }
+
+    .check-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+    .check-item label {
+      display: block;
+      padding: 8px 16px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .check-item input:checked + label {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ── RADIO GROUP ── */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .radio-item {
+      position: relative;
+    }
+
+    .radio-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+    .radio-item label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 0;
+    }
+
+    .radio-item label .radio-icon {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .radio-item input:checked + label {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .radio-item input:checked + label .radio-icon {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .radio-item input:checked + label .radio-icon::after {
+      content: '';
+      width: 6px; height: 6px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .radio-item label .radio-content {
+      flex: 1;
+    }
+
+    .radio-item label .radio-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .radio-item label .radio-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── WARN BOX ── */
+    .warn-box {
+      background: rgba(255,201,64,0.1);
+      border: 1px solid rgba(255,201,64,0.3);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--warn);
+      display: none;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    .warn-box.visible { display: block; }
+
+    /* ── CHAR COUNT ── */
+    .char-count {
+      text-align: right;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── CONDITIONAL FIELD ── */
+    .conditional { display: none; }
+    .conditional.visible { display: block; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    /* ── CARD HIGHLIGHT ── */
+    .highlight-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .highlight-card strong { color: var(--text); }
+
+    /* ── BUTTONS ── */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #a84918;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--input-bg);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      flex: 0 0 auto;
+      padding: 14px 18px;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    /* ── ERROR ── */
+    .field-error {
+      font-size: 12px;
+      color: var(--accent);
+      margin-top: 5px;
+      display: none;
+    }
+    .field.invalid .field-error { display: block; }
+    .field.invalid input,
+    .field.invalid select,
+    .field.invalid textarea {
+      border-color: var(--accent);
+    }
+
+    /* ── SUCCESS SCREEN ── */
+    #success-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .success-icon {
+      width: 72px; height: 72px;
+      background: rgba(0,200,150,0.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 32px;
+    }
+
+    #success-screen h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    #success-screen p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .success-detail {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 28px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .success-detail strong { color: var(--text); }
+
+    /* ── FOOTER ── */
+    .form-footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 24px;
+    }
+
+    .form-footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── OPTIONAL BADGE ── */
+    .optional-badge {
+      display: inline-block;
+      background: rgba(107,112,128,0.15);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+      color: var(--muted);
+      margin-left: 6px;
+      font-weight: 400;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .btn-row { flex-direction: column-reverse; }
+      .btn-secondary { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Story bar progress -->
+  <div class="story-bar" id="story-bar">
+    <div class="story-seg" id="seg-1"><div class="fill"></div></div>
+    <div class="story-seg" id="seg-2"><div class="fill"></div></div>
+    <div class="story-seg" id="seg-3"><div class="fill"></div></div>
+    <div class="story-seg" id="seg-4"><div class="fill"></div></div>
+    <div class="story-seg" id="seg-5"><div class="fill"></div></div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="orka-badge"><span class="dot"></span> ORKA Co — Vaga Aberta</div>
+    <h1>Social Media <span>Júnior</span></h1>
+    <p>100% remoto · Dedicação exclusiva · Pra quem respira internet e tem sangue nos olhos</p>
+    <div class="tags">
+      <span class="tag">📍 Remoto</span>
+      <span class="tag">🎬 UGC / Reels / TikTok</span>
+      <span class="tag">⚡ Velocidade > Perfeição</span>
+      <span class="tag">💡 Nível Júnior</span>
+    </div>
+  </div>
+
+  <!-- Form container -->
+  <div class="form-wrap">
+    <form id="main-form" novalidate>
+
+      <!-- STEP 1 -->
+      <div class="step active" id="step-1">
+        <p class="step-label">Etapa 1 de 5</p>
+        <h2 class="step-title">Quem é você?</h2>
+        <p class="step-desc">Antes de tudo, apresenta. A gente quer saber com quem tá falando.</p>
+
+        <div class="field" id="f-nome">
+          <label>Nome completo <span class="req">*</span></label>
+          <input type="text" id="nome" placeholder="Seu nome completo" autocomplete="name">
+          <p class="field-error">Preenche teu nome.</p>
+        </div>
+
+        <div class="field" id="f-email">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="seu@email.com" autocomplete="email">
+          <p class="field-error">Coloca um e-mail válido.</p>
+        </div>
+
+        <div class="field" id="f-whats">
+          <label>WhatsApp <span class="req">*</span>
+            <span class="hint">Com DDD — só pra entrar em contato se sua candidatura avançar.</span>
+          </label>
+          <input type="tel" id="whats" placeholder="(11) 9 9999-9999">
+          <p class="field-error">Precisa do seu WhatsApp.</p>
+        </div>
+
+        <div class="field" id="f-cidade">
+          <label>Cidade e Estado <span class="req">*</span></label>
+          <input type="text" id="cidade" placeholder="Ex: São Paulo, SP">
+          <p class="field-error">Coloca sua cidade.</p>
+        </div>
+
+        <div class="field">
+          <label>Como ficou sabendo dessa vaga?</label>
+          <select id="canal">
+            <option value="">Seleciona...</option>
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="linkedin">LinkedIn</option>
+            <option value="indicacao">Indicação</option>
+            <option value="grupo">Grupo de vagas / WhatsApp</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary" onclick="goTo(2)">Próximo →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" id="step-2">
+        <p class="step-label">Etapa 2 de 5</p>
+        <h2 class="step-title">Seus links</h2>
+        <p class="step-desc">Cola os perfis que você gerencia ou criou — pode ser pessoal mesmo. A gente quer ver seu trabalho, não o currículo.</p>
+
+        <div class="highlight-card">
+          <strong>💡 Não tem conta profissional?</strong> Sem problema. Perfil pessoal com conteúdo próprio já conta. O que importa é que você demonstre que sabe criar.
+        </div>
+
+        <div class="field" id="f-insta">
+          <label>Instagram <span class="req">*</span>
+            <span class="hint">Principal rede que você gerencia ou usa pra criar conteúdo.</span>
+          </label>
+          <input type="url" id="insta" placeholder="https://instagram.com/seuperfil">
+          <p class="field-error">Precisa de pelo menos o Instagram.</p>
+        </div>
+
+        <div class="field">
+          <label>TikTok <span class="optional-badge">opcional</span></label>
+          <input type="url" id="tiktok" placeholder="https://tiktok.com/@seuperfil">
+        </div>
+
+        <div class="field">
+          <label>YouTube <span class="optional-badge">opcional</span></label>
+          <input type="url" id="youtube" placeholder="https://youtube.com/@seucanal">
+        </div>
+
+        <hr class="divider">
+
+        <div class="field" id="f-link1">
+          <label>Link de um conteúdo seu que você mais se orgulha <span class="req">*</span>
+            <span class="hint">Pode ser um reel, vídeo, short, corte — qualquer formato que mostre o que você sabe fazer.</span>
+          </label>
+          <input type="url" id="link1" placeholder="https://...">
+          <p class="field-error">Manda pelo menos um link de conteúdo.</p>
+        </div>
+
+        <div class="field">
+          <label>Outro conteúdo seu <span class="optional-badge">opcional</span>
+            <span class="hint">Se tiver mais alguma coisa que quer mostrar, manda aqui.</span>
+          </label>
+          <input type="url" id="link2" placeholder="https://...">
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="goTo(1)">← Voltar</button>
+          <button type="button" class="btn btn-primary" onclick="goTo(3)">Próximo →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step" id="step-3">
+        <p class="step-label">Etapa 3 de 5</p>
+        <h2 class="step-title">Sua experiência</h2>
+        <p class="step-desc">Sem mentira, sem enrolação. Queremos entender onde você já chegou — mesmo que ainda seja pouco.</p>
+
+        <div class="field">
+          <label>Quais plataformas você domina? <span class="req">*</span>
+            <span class="hint">Seleciona todas que você produz ou editou conteúdo com consistência.</span>
+          </label>
+          <div class="check-group" id="plataformas">
+            <div class="check-item">
+              <input type="checkbox" id="p-insta" value="instagram">
+              <label for="p-insta">📸 Instagram</label>
+            </div>
+            <div class="check-item">
+              <input type="checkbox" id="p-tiktok" value="tiktok">
+              <label for="p-tiktok">🎵 TikTok</label>
+            </div>
+            <div class="check-item">
+              <input type="checkbox" id="p-yt" value="youtube">
+              <label for="p-yt">▶️ YouTube</label>
+            </div>
+            <div class="check-item">
+              <input type="checkbox" id="p-kwai" value="kwai">
+              <label for="p-kwai">📲 Kwai</label>
+            </div>
+            <div class="check-item">
+              <input type="checkbox" id="p-pin" value="pinterest">
+              <label for="p-pin">📌 Pinterest</label>
+            </div>
+            <div class="check-item">
+              <input type="checkbox" id="p-lin" value="linkedin">
+              <label for="p-lin">💼 LinkedIn</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Ferramentas de edição que você usa <span class="req">*</span>
+            <span class="hint">CapCut, Premiere, After Effects, Canva, DaVinci... lista o que souber usar de verdade.</span>
+          </label>
+          <input type="text" id="ferramentas" placeholder="Ex: CapCut, Canva, Premiere...">
+        </div>
+
+        <div class="field" id="f-resultado">
+          <label>Qual foi o melhor resultado que você já teve num conteúdo? <span class="req">*</span>
+            <span class="hint">Visualizações, engajamento, comentários — conta o que rolou e qual foi o conteúdo.</span>
+          </label>
+          <textarea id="resultado" placeholder="Ex: Postei um reel sobre X, chegou a 50 mil views orgânico. O segredo foi..." maxlength="600"></textarea>
+          <p class="char-count"><span id="resultado-count">0</span>/600</p>
+          <p class="field-error">Conta sobre algum resultado seu.</p>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="goTo(2)">← Voltar</button>
+          <button type="button" class="btn btn-primary" onclick="goTo(4)">Próximo →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step" id="step-4">
+        <p class="step-label">Etapa 4 de 5</p>
+        <h2 class="step-title">Fit com a ORKA</h2>
+        <p class="step-desc">Essa é a parte mais importante. Queremos entender se você e a gente pensamos parecido.</p>
+
+        <div class="field">
+          <label>Você tem disponibilidade exclusiva para essa vaga? <span class="req">*</span>
+            <span class="hint">A vaga exige dedicação total — sem freela paralelo ou outro projeto simultâneo.</span>
+          </label>
+          <div class="radio-group" id="disponibilidade">
+            <div class="radio-item">
+              <input type="radio" name="disp" id="d-sim" value="sim">
+              <label for="d-sim">
+                <span class="radio-icon"></span>
+                <span class="radio-content">
+                  <span class="radio-title">Sim, disponibilidade exclusiva</span>
+                  <span class="radio-sub">Posso me dedicar 100% a esse projeto</span>
+                </span>
+              </label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="disp" id="d-ajustar" value="ajustar">
+              <label for="d-ajustar">
+                <span class="radio-icon"></span>
+                <span class="radio-content">
+                  <span class="radio-title">Tenho outros projetos, mas posso encerrar</span>
+                  <span class="radio-sub">Se aprovado(a), me organizo pra ter dedicação total</span>
+                </span>
+              </label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="disp" id="d-nao" value="nao">
+              <label for="d-nao">
+                <span class="radio-icon"></span>
+                <span class="radio-content">
+                  <span class="radio-title">Não, não tenho disponibilidade exclusiva</span>
+                  <span class="radio-sub">Preciso manter outros projetos em paralelo</span>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="warn-box" id="warn-disp">
+            ⚠️ Essa vaga exige dedicação exclusiva. Se aprovado(a), você precisará encerrar outros projetos ou clientes. Se isso não for possível agora, pode candidatar de novo quando tiver essa disponibilidade!
+          </div>
+        </div>
+
+        <div class="field" id="f-salario">
+          <label>Qual a sua pretensão salarial? <span class="req">*</span>
+            <span class="hint">Coloca o valor mensal bruto que você espera receber.</span>
+          </label>
+          <input type="text" id="salario" placeholder="Ex: R$ 2.000 / R$ 2.500">
+          <p class="field-error">Coloca sua pretensão salarial.</p>
+        </div>
+
+        <div class="field" id="f-criativa">
+          <label>A pergunta criativa 🎬 <span class="req">*</span>
+            <span class="hint">Você tá no supermercado e vê uma situação inusitada na sua frente. Você tem 2 minutos. O que você faz? Como vira conteúdo?</span>
+          </label>
+          <textarea id="criativa" placeholder="Responde como se estivesse contando pra um amigo. Sem formalidade." maxlength="500"></textarea>
+          <p class="char-count"><span id="criativa-count">0</span>/500</p>
+          <p class="field-error">Responde a pergunta criativa.</p>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="goTo(3)">← Voltar</button>
+          <button type="button" class="btn btn-primary" onclick="goTo(5)">Próximo →</button>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step" id="step-5">
+        <p class="step-label">Etapa 5 de 5 — Última!</p>
+        <h2 class="step-title">Por que a ORKA?</h2>
+        <p class="step-desc">Reta final. Essa é sua chance de mostrar que você foi além do básico e realmente entendeu o que a gente faz.</p>
+
+        <div class="field" id="f-porque">
+          <label>Por que você quer fazer parte da ORKA Co? <span class="req">*</span>
+            <span class="hint">Nada de resposta genérica. Conta o que você sabe sobre a gente e por que faz sentido pra você agora.</span>
+          </label>
+          <textarea id="porque" placeholder="Fala de verdade. A gente vai notar quem pesquisou antes de responder..." maxlength="800" style="min-height: 130px;"></textarea>
+          <p class="char-count"><span id="porque-count">0</span>/800</p>
+          <p class="field-error">Conta o motivo de querer entrar na ORKA.</p>
+        </div>
+
+        <div class="field">
+          <label>Vídeo de apresentação <span class="optional-badge">opcional</span>
+            <span class="hint">Se quiser se apresentar em vídeo, manda o link aqui. Pode ser Loom, YouTube não listado, Google Drive — qualquer link que a gente consiga abrir.</span>
+          </label>
+          <input type="url" id="video-apres" placeholder="https://...">
+        </div>
+
+        <div class="field">
+          <label>Alguma coisa que você quer adicionar? <span class="optional-badge">opcional</span>
+            <span class="hint">Algo relevante que não coubesse nas perguntas anteriores.</span>
+          </label>
+          <textarea id="extra" placeholder="Opcional..." maxlength="400"></textarea>
+        </div>
+
+        <div class="highlight-card">
+          <strong>📌 Ao enviar você confirma:</strong><br>
+          Todas as informações aqui são verdadeiras. Seu portfólio é seu (ou de projetos nos quais você trabalhou diretamente). A ORKA pode entrar em contato pelo WhatsApp ou e-mail fornecido.
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" onclick="goTo(4)">← Voltar</button>
+          <button type="button" class="btn btn-primary" id="btn-submit" onclick="submitForm()">Enviar candidatura ✓</button>
+        </div>
+
+        <p class="form-footer">A ORKA Co analisa todas as candidaturas com cuidado. Retornaremos em até 7 dias úteis para quem avançar.</p>
+      </div>
+
+    </form>
+
+    <!-- SUCCESS SCREEN -->
+    <div id="success-screen">
+      <div class="success-icon">🎉</div>
+      <h2>Candidatura enviada!</h2>
+      <p>A gente recebeu tudo certinho. Agora é esperar — e não fica mandando mensagem perguntando o resultado, combinado? 😄</p>
+      <p>Se sua candidatura avançar, a gente entra em contato pelo WhatsApp ou e-mail em até <strong style="color:var(--text)">7 dias úteis.</strong></p>
+
+      <div class="success-detail">
+        <strong>O que vem agora:</strong><br>
+        1. Nossa equipe analisa seu portfólio e respostas.<br>
+        2. Candidatos selecionados passam por uma entrevista rápida.<br>
+        3. Pode rolar um teste prático de criação de conteúdo.<br>
+        4. Decisão final e início do onboarding.<br><br>
+        <strong>Enquanto isso:</strong> segue a <strong>@theorkaco</strong> no Instagram e bate um olho no que a gente faz. 😉
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    function updateProgress(step) {
+      for (let i = 1; i <= totalSteps; i++) {
+        const seg = document.getElementById('seg-' + i);
+        seg.className = 'story-seg';
+        if (i < step) { seg.classList.add('done'); seg.querySelector('.fill').style.width = '100%'; }
+        else if (i === step) { seg.classList.add('active'); seg.querySelector('.fill').style.width = '60%'; }
+        else { seg.querySelector('.fill').style.width = '0%'; }
+      }
+    }
+
+    function showStep(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      const s = document.getElementById('step-' + n);
+      if (s) { s.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      updateProgress(n);
+      currentStep = n;
+    }
+
+    function validateStep(n) {
+      let ok = true;
+
+      const clear = (id) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('invalid');
+      };
+      const err = (id) => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.add('invalid'); ok = false; }
+      };
+
+      if (n === 1) {
+        ['f-nome','f-email','f-whats','f-cidade'].forEach(clear);
+        if (!v('nome')) err('f-nome');
+        if (!v('email') || !v('email').includes('@')) err('f-email');
+        if (!v('whats')) err('f-whats');
+        if (!v('cidade')) err('f-cidade');
+      }
+
+      if (n === 2) {
+        clear('f-insta'); clear('f-link1');
+        if (!v('insta')) err('f-insta');
+        if (!v('link1')) err('f-link1');
+      }
+
+      if (n === 3) {
+        clear('f-resultado');
+        if (!v('ferramentas')) { document.getElementById('ferramentas').style.borderColor = '#C85C1F'; ok = false; }
+        else { document.getElementById('ferramentas').style.borderColor = ''; }
+        if (!v('resultado')) err('f-resultado');
+      }
+
+      if (n === 4) {
+        clear('f-salario'); clear('f-criativa');
+        if (!v('salario')) err('f-salario');
+        if (!v('criativa')) err('f-criativa');
+      }
+
+      if (n === 5) {
+        clear('f-porque');
+        if (!v('porque')) err('f-porque');
+      }
+
+      return ok;
+    }
+
+    function v(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    }
+
+    function goTo(n) {
+      if (n > currentStep && !validateStep(currentStep)) {
+        const firstErr = document.querySelector('.field.invalid');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      showStep(n);
+    }
+
+    async function submitForm() {
+      if (!validateStep(5)) {
+        const firstErr = document.querySelector('.field.invalid');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+
+      // Plataformas selecionadas
+      const plats = [...document.querySelectorAll('#plataformas input:checked')].map(c => c.value).join(', ');
+
+      const payload = {
+        access_key: '83375f63-1357-4be9-ac0b-1813e8290a21', // ← cola sua chave do web3forms.com aqui
+        subject: '🎬 Nova candidatura — Social Media Jr | ORKA Co',
+        from_name: 'Formulário ORKA Co',
+
+        // Dados pessoais
+        nome:         v('nome'),
+        email:        v('email'),
+        whatsapp:     v('whats'),
+        cidade:       v('cidade'),
+        como_soube:   v('canal'),
+
+        // Links
+        instagram:    v('insta'),
+        tiktok:       v('tiktok'),
+        youtube:      v('youtube'),
+        conteudo_1:   v('link1'),
+        conteudo_2:   v('link2'),
+
+        // Experiência
+        plataformas:  plats,
+        ferramentas:  v('ferramentas'),
+        melhor_resultado: v('resultado'),
+
+        // Fit
+        disponibilidade:  document.querySelector('input[name="disp"]:checked')?.value || '',
+        pretensao_salarial: v('salario'),
+        resposta_criativa:  v('criativa'),
+
+        // Final
+        por_que_orka:       v('porque'),
+        video_apresentacao: v('video-apres'),
+        informacoes_extras: v('extra'),
+      };
+
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          for (let i = 1; i <= totalSteps; i++) {
+            const seg = document.getElementById('seg-' + i);
+            seg.className = 'story-seg done';
+            seg.querySelector('.fill').style.width = '100%';
+          }
+          document.getElementById('main-form').style.display = 'none';
+          document.getElementById('success-screen').style.display = 'block';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          throw new Error('Falha no envio');
+        }
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Tentar novamente';
+        alert('Ops, algo deu errado. Tenta de novo em alguns segundos.');
+      }
+    }
+
+    // Char counters
+    function setupCounter(textareaId, countId) {
+      const ta = document.getElementById(textareaId);
+      const ct = document.getElementById(countId);
+      if (ta && ct) {
+        ta.addEventListener('input', () => { ct.textContent = ta.value.length; });
+      }
+    }
+    setupCounter('resultado', 'resultado-count');
+    setupCounter('criativa', 'criativa-count');
+    setupCounter('porque', 'porque-count');
+
+    // Disponibilidade warning
+    document.querySelectorAll('input[name="disp"]').forEach(r => {
+      r.addEventListener('change', () => {
+        const warn = document.getElementById('warn-disp');
+        warn.classList.toggle('visible', r.value === 'nao' && r.checked);
+      });
+    });
+
+    // Init
+    updateProgress(1);
+  </script>
+</body>
+</html>
